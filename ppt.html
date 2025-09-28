@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Redesigned Presentation: Linked Lists</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #0f172a; /* A darker navy blue */
+        }
+        .font-poppins { font-family: 'Poppins', sans-serif; }
+        .font-fira { font-family: 'Fira Code', monospace; }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #1a1a2e;
+            padding: 3rem 4rem;
+            margin: 2rem auto;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+
+        .accent-text { color: #00c9a7; }
+        .danger-text { color: #f95959; }
+
+        .card {
+            background-color: #1f2a40;
+            border-radius: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Node and Arrow styles from the sample slide */
+        .node {
+            background-color: #162447;
+            border: 2px solid #00c9a7;
+            color: #e3e3e3;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .node-container:hover .node {
+            background-color: #00c9a7;
+            color: #1a1a2e;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 201, 167, 0.5);
+        }
+        .arrow { position: relative; color: #00c9a7; font-size: 2rem; line-height: 1; }
+        .arrow::after { content: '>'; position: absolute; top: 50%; left: 100%; transform: translateY(-50%); margin-left: 4px; }
+        .arrow-left::before { content: '<'; position: absolute; top: 50%; right: 100%; transform: translateY(-50%); margin-right: 4px; }
+        .null-text { color: #f95959; font-weight: 700; font-size: 1.1rem; }
+        .circular-arrow-right { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); width: 80%; height: 20px; border: 2px dashed #00c9a7; border-top: none; border-radius: 0 0 20px 20px; }
+        .circular-arrow-right::after { content: '>'; color: #00c9a7; position: absolute; left: -10px; top: -10px; font-size: 1.5rem; }
+        .circular-arrow-left { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 80%; height: 20px; border: 2px dashed #e3e3e3; border-bottom: none; border-radius: 20px 20px 0 0; }
+        .circular-arrow-left::before { content: '<'; color: #e3e3e3; position: absolute; right: -10px; bottom: -10px; font-size: 1.5rem; }
+    </style>
+</head>
+<body class="p-4">
+
+    <!-- Slide 1: Title Slide -->
+    <div class="slide-container justify-between" style="background-image: radial-gradient(circle at top left, rgba(0, 201, 167, 0.1), transparent 40%), radial-gradient(circle at bottom right, rgba(22, 36, 71, 0.5), transparent 50%);">
+        <div>
+            <p class="font-poppins text-lg text-gray-400">Department of Advance Computing</p>
+            <h1 class="font-poppins text-7xl font-bold text-white mt-4 leading-tight">Linked Lists in <br><span class="accent-text">Data Structures</span></h1>
+        </div>
+        <div>
+            <p class="text-gray-300 font-semibold">GROUP ACTIVITY BY:</p>
+            <p class="text-gray-400">Harsh (PCEA24CA022) | Happy Gupta (PCEA24CA021) | Aryan Jain (PCEA24CA015) | Manvendra Kumawat (PCEA24CA033)</p>
+            <p class="text-gray-400 mt-2">Submitted to: Appoorva Bansal Mam(Assistant Professor)</p>
+        </div>
+    </div>
+
+    <!-- Slide 2: Introduction -->
+    <div class="slide-container">
+        <header class="text-center mb-10">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">Why Not Just Use an <span class="accent-text">Array?</span></h1>
+            <p class="text-gray-400 text-xl mt-2">Understanding the limitations of static data structures.</p>
+        </header>
+        <main class="grid grid-cols-2 gap-8 flex-grow">
+            <div class="card p-8 flex flex-col items-center justify-center text-center">
+                <h2 class="font-poppins text-2xl font-semibold text-white mb-4">The Rigidity Problem</h2>
+                 <div class="flex gap-2 my-4">
+                    <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center text-white font-bold">1</div>
+                    <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center text-white font-bold">2</div>
+                    <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center text-white font-bold">3</div>
+                    <div class="w-12 h-12 bg-red-500 rounded flex items-center justify-center text-white font-bold text-2xl animate-pulse">?</div>
+                </div>
+                <p class="text-gray-400">Arrays have a fixed size. If you run out of space, you're stuck. Adding a new element can be impossible without creating a new, larger array.</p>
+                <p class="danger-text font-bold mt-4 text-lg">NO ROOM!</p>
+            </div>
+            <div class="card p-8 flex flex-col items-center justify-center text-center">
+                <h2 class="font-poppins text-2xl font-semibold text-white mb-4">The Wastage Problem</h2>
+                <div class="flex gap-2 my-4">
+                    <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center text-white font-bold">1</div>
+                    <div class="w-12 h-12 bg-blue-500 rounded flex items-center justify-center text-white font-bold">2</div>
+                    <div class="w-12 h-12 bg-gray-600 rounded opacity-50"></div>
+                    <div class="w-12 h-12 bg-gray-600 rounded opacity-50"></div>
+                </div>
+                <p class="text-gray-400">If you allocate too much space to be safe, you end up wasting memory that could be used by other parts of your application.</p>
+                <p class="danger-text font-bold mt-4 text-lg">WASTED SPACE!</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide 3: Structure of a Node -->
+    <div class="slide-container">
+        <header class="text-center mb-10">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">Anatomy of a <span class="accent-text">Node</span></h1>
+            <p class="text-gray-400 text-xl mt-2">The fundamental building block of every Linked List.</p>
+        </header>
+        <main class="flex-grow flex items-center justify-center">
+            <div class="flex items-center bg-gray-900/50 p-8 rounded-xl">
+                <!-- Data Part -->
+                <div class="text-center">
+                    <p class="font-poppins text-white text-2xl mb-2">DATA</p>
+                    <div class="w-48 h-32 bg-[#162447] border-4 border-[#00c9a7] rounded-lg flex items-center justify-center">
+                        <span class="text-white text-4xl font-bold">42</span>
+                    </div>
+                    <p class="text-gray-400 mt-2">Stores the actual information or value.</p>
+                </div>
+                
+                <div class="text-5xl text-gray-500 mx-8">+</div>
+
+                <!-- Pointer Part -->
+                <div class="text-center">
+                    <p class="font-poppins accent-text text-2xl mb-2">NEXT</p>
+                    <div class="w-48 h-32 bg-[#162447] border-4 border-[#00c9a7] rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 accent-text" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                    </div>
+                    <p class="text-gray-400 mt-2">A pointer to the next node in the chain.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Slide 4: Types of Linked List -->
+    <div class="slide-container">
+        <header class="text-center mb-10">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">One Chain, <span class="accent-text">Many Forms</span></h1>
+            <p class="text-gray-400 text-xl mt-2">Exploring the different types of Linked Lists</p>
+        </header>
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+            <div class="card p-6 flex flex-col items-center justify-center">
+                <h2 class="font-poppins text-2xl font-semibold text-white mb-6">Singly Linked List</h2>
+                <div class="flex items-center gap-4 node-container">
+                    <div class="node">A</div><div class="arrow"></div><div class="node">B</div><div class="arrow"></div><div class="node">C</div><div class="arrow"></div><span class="null-text">NULL</span>
+                </div>
+                <p class="text-gray-400 text-center mt-6">Each node points only to the next node. Simple and efficient for forward traversal.</p>
+            </div>
+            <div class="card p-6 flex flex-col items-center justify-center">
+                <h2 class="font-poppins text-2xl font-semibold text-white mb-6">Doubly Linked List</h2>
+                <div class="flex items-center gap-4 node-container">
+                    <span class="null-text">NULL</span><div class="arrow-left"></div><div class="node">A</div><div class="arrow arrow-left"></div><div class="node">B</div><div class="arrow arrow-left"></div><div class="node">C</div><div class="arrow"></div><span class="null-text">NULL</span>
+                </div>
+                <p class="text-gray-400 text-center mt-6">Each node points to both the next and previous nodes, allowing for backward traversal.</p>
+            </div>
+            <div class="card p-6 flex flex-col items-center justify-center">
+                 <h2 class="font-poppins text-2xl font-semibold text-white mb-6">Circular Linked List</h2>
+                 <div class="relative w-full">
+                    <div class="flex items-center justify-center gap-4 node-container">
+                        <div class="node">A</div><div class="arrow"></div><div class="node">B</div><div class="arrow"></div><div class="node">C</div>
+                    </div>
+                    <div class="circular-arrow-right"></div>
+                 </div>
+                 <p class="text-gray-400 text-center mt-12">The last node's pointer connects back to the first node, forming a complete circle.</p>
+            </div>
+            <div class="card p-6 flex flex-col items-center justify-center">
+                <h2 class="font-poppins text-2xl font-semibold text-white mb-6">Doubly Circular</h2>
+                 <div class="relative w-full">
+                    <div class="flex items-center justify-center gap-4 node-container">
+                        <div class="node">A</div><div class="arrow arrow-left"></div><div class="node">B</div><div class="arrow arrow-left"></div><div class="node">C</div>
+                    </div>
+                    <div class="circular-arrow-right"></div>
+                    <div class="circular-arrow-left"></div>
+                 </div>
+                 <p class="text-gray-400 text-center mt-12">A combination of doubly and circular lists, allowing traversal in both directions indefinitely.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide 5: Core Operations -->
+    <div class="slide-container">
+        <header class="text-center mb-10">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">Core Operations: <span class="accent-text">What Can We Do?</span></h1>
+            <p class="text-gray-400 text-xl mt-2">The essential actions for managing data in a Linked List.</p>
+        </header>
+        <main class="grid grid-cols-5 gap-6 flex-grow">
+            <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Traversal</h3>
+                 <p class="text-gray-400 mt-2 text-sm">Visit each node one by one.</p>
+            </div>
+            <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Insertion</h3>
+                 <p class="text-gray-400 mt-2 text-sm">Add a new node to the list.</p>
+            </div>
+            <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Deletion</h3>
+                 <p class="text-gray-400 mt-2 text-sm">Remove a node from the list.</p>
+            </div>
+            <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Searching</h3>
+                 <p class="text-gray-400 mt-2 text-sm">Find a specific element.</p>
+            </div>
+            <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Updation</h3>
+                 <p class="text-gray-400 mt-2 text-sm">Change the value of a node.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide 6 & 7: Implementation (Combined for flow) -->
+    <div class="slide-container">
+        <header class="text-center mb-6">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">Implementation in <span class="accent-text">Code</span></h1>
+            <p class="text-gray-400 text-xl mt-2">From theory to a working Singly Linked List.</p>
+        </header>
+        <main class="grid grid-cols-2 gap-8 flex-grow">
+            <div class="card p-6">
+                <h3 class="font-poppins text-2xl text-white font-semibold mb-4">The Code Blueprint</h3>
+                <div class="bg-gray-900 rounded-lg p-4 font-fira text-sm">
+                    <pre><code class="language-cpp text-gray-300"><span class="text-purple-400">struct</span> <span class="text-green-300">Node</span> {
+    <span class="text-blue-400">int</span> data;
+    <span class="text-green-300">Node*</span> next;
+};
+<br>
+<span class="text-blue-400">void</span> <span class="text-yellow-300">insertNode</span>(<span class="text-green-300">Node**</span> head, <span class="text-blue-400">int</span> value) {
+    <span class="text-green-300">Node*</span> newNode = <span class="text-purple-400">new</span> <span class="text-green-300">Node</span>();
+    newNode->data = value;
+    newNode->next = *head;
+    *head = newNode;
+}
+                    </code></pre>
+                </div>
+            </div>
+            <div class="card p-6">
+                <h3 class="font-poppins text-2xl text-white font-semibold mb-4">Visualized Output</h3>
+                 <div class="flex items-center justify-center h-full">
+                    <div class="flex items-center gap-4">
+                        <div class="text-center"><div class="node">30</div><p class="text-xs text-gray-400 mt-1">New Head</p></div>
+                        <div class="arrow"></div>
+                        <div class="node">20</div>
+                        <div class="arrow"></div>
+                        <div class="node">10</div>
+                        <div class="arrow"></div>
+                        <span class="null-text">NULL</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide 8 & 9: Pros and Cons -->
+    <div class="slide-container">
+         <header class="text-center mb-10">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">Advantages vs. <span class="danger-text">Disadvantages</span></h1>
+            <p class="text-gray-400 text-xl mt-2">Weighing the pros and cons of using Linked Lists.</p>
+        </header>
+        <main class="grid grid-cols-2 gap-8 flex-grow">
+            <div class="card border-2 border-green-500/50 p-6">
+                <h2 class="font-poppins text-2xl font-semibold text-green-400 mb-4 text-center">Advantages</h2>
+                <ul class="space-y-4 text-gray-300">
+                    <li class="flex items-start"><span class="text-green-400 mr-3">✔</span> <strong>Dynamic Size:</strong> Grow or shrink at runtime, no wasted memory.</li>
+                    <li class="flex items-start"><span class="text-green-400 mr-3">✔</span> <strong>Efficient Insertions/Deletions:</strong> No need to shift elements, just update pointers.</li>
+                    <li class="flex items-start"><span class="text-green-400 mr-3">✔</span> <strong>Foundation for Other Structures:</strong> Used to implement stacks, queues, and graphs.</li>
+                </ul>
+            </div>
+            <div class="card border-2 border-red-500/50 p-6">
+                <h2 class="font-poppins text-2xl font-semibold text-red-400 mb-4 text-center">Disadvantages</h2>
+                 <ul class="space-y-4 text-gray-300">
+                    <li class="flex items-start"><span class="text-red-400 mr-3">✖</span> <strong>Sequential Access:</strong> Cannot directly access an element by index; must traverse the list.</li>
+                    <li class="flex items-start"><span class="text-red-400 mr-3">✖</span> <strong>Extra Memory Usage:</strong> Each node requires additional memory for its pointer.</li>
+                    <li class="flex items-start"><span class="text-red-400 mr-3">✖</span> <strong>Cache Unfriendly:</strong> Nodes can be scattered in memory, leading to slower access times.</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide 10: Applications -->
+    <div class="slide-container">
+        <header class="text-center mb-10">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">Linked Lists in <span class="accent-text">Your Daily Life</span></h1>
+            <p class="text-gray-400 text-xl mt-2">You use them more often than you think.</p>
+        </header>
+        <main class="grid grid-cols-2 md:grid-cols-4 gap-6 flex-grow">
+            <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-8C10.07 8.5 8.5 10.07 8.5 12s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5S13.93 8.5 12 8.5z"/></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Music Playlists</h3>
+            </div>
+             <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Browser History</h3>
+            </div>
+             <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l4-4m-4 4l4 4"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Undo/Redo</h3>
+            </div>
+             <div class="card p-4 flex flex-col items-center justify-center text-center">
+                 <svg class="w-16 h-16 accent-text mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l-1-1m5.5-5.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path></svg>
+                 <h3 class="font-poppins text-xl text-white font-semibold">Image Viewers</h3>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide 11: Conclusion -->
+    <div class="slide-container">
+        <header class="text-center mb-12">
+            <h1 class="font-poppins text-5xl font-bold text-white tracking-wide">Your Key <span class="accent-text">Takeaways</span></h1>
+        </header>
+        <main class="space-y-8">
+            <div class="card p-6 flex items-center">
+                <span class="font-poppins text-5xl font-bold accent-text mr-6">1</span>
+                <div>
+                    <h3 class="font-poppins text-2xl text-white font-semibold">Flexibility is Key</h3>
+                    <p class="text-gray-400">Linked Lists adapt and provide dynamic memory allocation where arrays are too rigid.</p>
+                </div>
+            </div>
+            <div class="card p-6 flex items-center">
+                <span class="font-poppins text-5xl font-bold accent-text mr-6">2</span>
+                <div>
+                    <h3 class="font-poppins text-2xl text-white font-semibold">Nodes & Pointers</h3>
+                    <p class="text-gray-400">This simple but powerful combination of data and a "next" link is the core concept.</p>
+                </div>
+            </div>
+            <div class="card p-6 flex items-center">
+                <span class="font-poppins text-5xl font-bold accent-text mr-6">3</span>
+                <div>
+                    <h3 class="font-poppins text-2xl text-white font-semibold">Mastering Them Unlocks More</h3>
+                    <p class="text-gray-400">Understanding linked lists is essential for learning advanced data structures like queues, stacks, and graphs.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slide 12: Thank You -->
+    <div class="slide-container text-center justify-center" style="background-image: radial-gradient(circle, rgba(0, 201, 167, 0.1), transparent 50%);">
+        <h1 class="font-poppins text-8xl font-bold text-white">Thank You</h1>
+        <p class="font-poppins text-5xl text-gray-300 mt-8">Questions?</p>
+    </div>
+
+</body>
+</html>
